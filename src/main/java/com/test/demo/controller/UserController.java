@@ -3,37 +3,36 @@ package com.test.demo.controller;
 import com.test.demo.entity.User;
 import com.test.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(path = "/users")
 public class UserController {
+        private final UserService userService;
 
-    @Autowired
-    private UserService service;
-
-    @GetMapping("/index")
-    public String welcome() {
-        return "Welcome this endpoint is not secure";
+        @Autowired
+        public UserController(UserService userService) {
+            this.userService = userService;
+        }
+    @GetMapping
+    List<User> getUsers() {
+        return userService.getUsers();
     }
-
-    @PostMapping("/signup")
-    public String addNewUser(@RequestBody User user){
-        return service.addUser(user);
+    @PostMapping
+    public void registerNewUser(@RequestBody User user) {
+            userService.addNewUser(user);
     }
-
-    @GetMapping("/all")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public List<User> getAllTheUsers() {
-        return service.getUsers();
+    @DeleteMapping(path="{userId}")
+    public void deleteStudent(@PathVariable("userId") Long id){
+        userService.deleteUser(id);
     }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public User getUserById(@PathVariable int id) {
-        return service.getUser(id);
+    @PutMapping(path = "{userId}")
+    public void updateUser(
+            @PathVariable("userId") Long userId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email) {
+        userService.updateUser(userId, name, email);
     }
 }
