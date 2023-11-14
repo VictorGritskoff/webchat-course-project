@@ -17,18 +17,46 @@ var colors = [
 ];
 
 function connect(event) {
-    username = document.querySelector('#name').value.trim();
-
-    if(username) {
-        usernamePage.classList.add('hidden');
-        chatPage.classList.remove('hidden');
-
-        var socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-
-        stompClient.connect({}, onConnected, onError);
-    }
     event.preventDefault();
+
+    username = document.querySelector('#username').value.trim();
+    var password = document.querySelector('#password').value.trim();
+
+    // Отправка данных на сервер для аутентификации
+    authenticateUser(username, password);
+}
+function authenticateUser(username, password) {
+    var authData = {
+        username: username,
+        password: password
+    };
+
+    // AJAX запрос для аутентификации пользователя
+    fetch('/authenticate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(authData)
+    })
+        .then(response => {
+            if (response.ok) {
+                // Аутентификация прошла успешно, подключаемся к веб-чату
+                usernamePage.classList.add('hidden');
+                chatPage.classList.remove('hidden');
+
+                var socket = new SockJS('/ws');
+                stompClient = Stomp.over(socket);
+                stompClient.connect({}, onConnected, onError);
+            } else {
+                // Аутентификация не удалась, выводим сообщение об ошибке
+                connectingElement.textContent = 'Authentication failed. Please check your credentials.';
+                connectingElement.style.color = 'red';
+            }
+        })
+        .catch(error => {
+            console.error('Authentication failed:', error);
+        });
 }
 
 

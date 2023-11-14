@@ -23,13 +23,13 @@ public class User {
             generator = "user_sequence"
     )
     private Long id;
-    private String name;
+    private String username;
     private String password;
     private String email;
     private String roles;
 
-    public User(String name, String password, String email, String roles) {
-        this.name = name;
+    public User(String username, String password, String email, String roles) {
+        this.username = username;
         this.password = password;
         this.email = email;
         this.roles = roles;
@@ -39,7 +39,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", roles='" + roles + '\'' +
