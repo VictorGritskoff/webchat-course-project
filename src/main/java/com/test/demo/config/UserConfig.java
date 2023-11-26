@@ -14,10 +14,10 @@ public class UserConfig {
     CommandLineRunner commandLineRunner(UserRepository userRepository) {
         return args -> {
             User mariam = new User(
-                    "Mariam", "Mariam123", "maraiam@mail.ru", "user"
+                    "Mary", "Mary123", "mary@mail.ru", "admin"
             );
             User alex = new User(
-                    "Alex", "Alex123", "alex@mail.ru", "user"
+                    "Alex", "Alex123", "alex@mail.ru", "admin"
             );
             userRepository.saveAll(List.of(mariam, alex));
         };

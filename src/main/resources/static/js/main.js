@@ -31,7 +31,6 @@ function authenticateUser(username, password) {
         password: password
     };
 
-    // AJAX запрос для аутентификации пользователя
     fetch('/authenticate', {
         method: 'POST',
         headers: {
@@ -86,7 +85,8 @@ function sendMessage(event) {
         var chatMessage = {
             sender: username,
             content: messageInput.value,
-            type: 'CHAT'
+            type: 'CHAT',
+            timestamp: new Date().toISOString()  // Используйте текущее время в формате строки
         };
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
         messageInput.value = '';
@@ -97,15 +97,16 @@ function sendMessage(event) {
 
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
-
     var messageElement = document.createElement('li');
 
-    if(message.type === 'JOIN') {
+    if (message.type === 'JOIN' || message.type === 'LEAVE') {
         messageElement.classList.add('event-message');
-        message.content = message.sender + ' joined!';
-    } else if (message.type === 'LEAVE') {
-        messageElement.classList.add('event-message');
-        message.content = message.sender + ' left!';
+
+        var eventText = document.createElement('p');
+        eventText.textContent = message.sender + (message.type === 'JOIN' ? ' joined!' : ' left!');
+
+        messageElement.appendChild(eventText);
+
     } else {
         messageElement.classList.add('chat-message');
 
@@ -114,22 +115,51 @@ function onMessageReceived(payload) {
         avatarElement.appendChild(avatarText);
         avatarElement.style['background-color'] = getAvatarColor(message.sender);
 
-        messageElement.appendChild(avatarElement);
+        var contentWrapper = document.createElement('div');
+        contentWrapper.classList.add('content-wrapper');
 
-        var usernameElement = document.createElement('span');
+        var usernameElement = document.createElement('p');
+        usernameElement.classList.add('username');
+        usernameElement.style['font-weight'] = 'bold';
         var usernameText = document.createTextNode(message.sender);
         usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
+
+        var textElement = document.createElement('p');
+        var messageText = document.createTextNode(message.content);
+        textElement.appendChild(messageText);
+
+        // Отображение времени справа
+        var timeElement = document.createElement('span');
+        timeElement.classList.add('timestamp');
+        var timestamp = new Date(message.timestamp);
+        var hours = timestamp.getHours();
+        var minutes = "0" + timestamp.getMinutes();
+        var seconds = "0" + timestamp.getSeconds();
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        var timeText = document.createTextNode(formattedTime);
+        timeElement.appendChild(timeText);
+
+        contentWrapper.appendChild(usernameElement);
+        contentWrapper.appendChild(textElement);
+        contentWrapper.appendChild(timeElement);
+
+        messageElement.appendChild(avatarElement);
+        messageElement.appendChild(contentWrapper);
     }
-
-    var textElement = document.createElement('p');
-    var messageText = document.createTextNode(message.content);
-    textElement.appendChild(messageText);
-
-    messageElement.appendChild(textElement);
 
     messageArea.appendChild(messageElement);
     messageArea.scrollTop = messageArea.scrollHeight;
+
+    messageElement.addEventListener('contextmenu', function (event) {
+        event.preventDefault();
+        var isMyMessage = message.sender === username;
+        if (isMyMessage) {
+            var deleteConfirmation = confirm('Are you sure you want to delete this message?');
+            if (deleteConfirmation) {
+                messageElement.remove();
+            }
+        }
+    });
 }
 
 
@@ -141,6 +171,7 @@ function getAvatarColor(messageSender) {
     var index = Math.abs(hash % colors.length);
     return colors[index];
 }
+
 
 usernameForm.addEventListener('submit', connect, true)
 messageForm.addEventListener('submit', sendMessage, true)

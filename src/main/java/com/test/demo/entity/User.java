@@ -28,6 +28,11 @@ public class User {
     private String email;
     private String roles;
 
+    @Transient
+    public boolean isAdmin() {
+        return roles != null && roles.contains("admin");
+    }
+
     public User(String username, String password, String email, String roles) {
         this.username = username;
         this.password = password;
