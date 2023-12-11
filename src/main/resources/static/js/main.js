@@ -49,7 +49,7 @@ function authenticateUser(username, password) {
                 stompClient.connect({}, onConnected, onError);
             } else {
                 // Аутентификация не удалась, выводим сообщение об ошибке
-                connectingElement.textContent = 'Authentication failed. Please check your credentials.';
+                connectingElement.textContent = 'Авторизация не завершена! Проверьте свои данные!';
                 connectingElement.style.color = 'red';
             }
         })
@@ -74,7 +74,7 @@ function onConnected() {
 
 
 function onError(error) {
-    connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
+    connectingElement.textContent = 'Не могу подключиться к WebSockets. Обновите страницу и попробуйте снова!';
     connectingElement.style.color = 'red';
 }
 

@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta charset="UTF-8">
     <title>Sign Up page</title>
     <link rel="stylesheet" href="/css/main.css" />
 </head>
@@ -11,6 +12,7 @@
 </noscript>
 <div id="username-page">
     <div class="username-page-container">
+        <div class="connecting" id="error-message"></div>
         <h1 class="title">Sign up</h1>
         <form id="usernameForm" name="usernameForm">
             <div class="form-group">
@@ -31,6 +33,7 @@
         </form>
     </div>
     <script src="/js/signup.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
 </div>
 </body>
 </html>

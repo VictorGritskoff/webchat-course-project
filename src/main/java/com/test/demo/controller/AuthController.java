@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 public class AuthController {
 
@@ -34,6 +37,24 @@ public class AuthController {
         } else {
             System.out.println("Authentication failed for user: " + username);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+    @PostMapping("/checkUser")
+    public ResponseEntity<Map<String, Boolean>> checkUser(@RequestBody AuthRequest authRequest) {
+        try {
+            String username = authRequest.getUsername();
+            String password = authRequest.getPassword();
+
+            User user = userService.getUserByUsernameAndPassword(username, password);
+
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("exists", user != null);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("error", true);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 }

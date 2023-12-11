@@ -19,7 +19,10 @@ public class UserConfig {
             User alex = new User(
                     "Alex", "Alex123", "alex@mail.ru", "admin"
             );
-            userRepository.saveAll(List.of(mariam, alex));
+            User max = new User(
+                    "Max", "Max123", "max@mail.ru", "user"
+            );
+            userRepository.saveAll(List.of(mariam, alex, max));
         };
     }
 }

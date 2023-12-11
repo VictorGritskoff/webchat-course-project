@@ -26,11 +26,13 @@ body {
     margin: 0;
 }
 
-.connecting {
-    text-align: center;
-    color: #F39F5A;
-    font-style: italic;
-    margin-top: 10px;
+#error-message {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 5px;
+    color: blue !important;
 }
 
 /* Стили для области сообщений */
